@@ -1,10 +1,6 @@
 variable "project_name" {}
 variable "environment" {}
 
-variable "ssh_keyname" {
-  default = ""
-}
-
 variable "resource_group" {
   default = "Default"
 }
