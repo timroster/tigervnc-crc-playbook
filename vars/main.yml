@@ -1,4 +1,4 @@
 ---
-user: 'jj'
-geometry: "1280x1024"
-allowDirect: true
+user: 'crcuser'
+geometry: "1680x1050"
+allowDirect: false
