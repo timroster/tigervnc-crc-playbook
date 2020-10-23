@@ -1,6 +1,10 @@
+data "ibm_is_image" "iac_image" {
+  name = var.image_name
+}
+
 resource "ibm_is_instance" "iac_test_instance" {
   name    = "${var.project_name}-${var.environment}-instance"
-  image   = var.image
+  image   = data.ibm_is_image.iac_image.id
   resource_group  = data.ibm_resource_group.group.id
   profile = var.profile
 

@@ -31,6 +31,24 @@ resource "ibm_is_security_group_rule" "iac_test_security_group_rule_tcp_ssh" {
   }
 }
 
+resource "ibm_is_security_group_rule" "iac_test_security_group_rule_tcp_http" {
+  group     = ibm_is_security_group.iac_test_security_group.id
+  direction = "inbound"
+  tcp {
+    port_min = 80
+    port_max = 80
+  }
+}
+
+resource "ibm_is_security_group_rule" "iac_test_security_group_rule_tcp_https" {
+  group     = ibm_is_security_group.iac_test_security_group.id
+  direction = "inbound"
+  tcp {
+    port_min = 443
+    port_max = 443
+  }
+}
+
 resource "ibm_is_floating_ip" "iac_test_floating_ip" {
   name   = "${var.project_name}-${var.environment}-ip"
   resource_group  = data.ibm_resource_group.group.id

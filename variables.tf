@@ -17,6 +17,6 @@ variable "profile" {
   default = "cx2-2x4"
 }
 
-variable "image" {
-  default = "r006-f55c2dc3-8420-4dda-948b-9205e3287b74"
+variable "image_name" {
+  default = "ibm-centos-8-2-minimal-amd64-1"
 }

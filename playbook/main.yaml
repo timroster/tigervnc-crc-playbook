@@ -84,6 +84,22 @@
         jump: ACCEPT
       when: allowDirect
 
+    - name: allow port 80 into the machine
+      iptables:
+        chain: INPUT
+        protocol: tcp
+        ctstate: NEW
+        destination_port: 80
+        jump: ACCEPT
+
+    - name: allow port 443 into the machine
+      iptables:
+        chain: INPUT
+        protocol: tcp
+        ctstate: NEW
+        destination_port: 443
+        jump: ACCEPT
+
     - name: pull down crc to the machine
       unarchive:
         src: https://mirror.openshift.com/pub/openshift-v4/clients/crc/latest/crc-linux-amd64.tar.xz
