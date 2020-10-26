@@ -3,7 +3,6 @@
 #
 # apply latest
 dnf update -y
-dnf install -y NetworkManager
 
 # code to set up the end-user (run in terraform)
 useradd -m crcuser
@@ -17,7 +16,7 @@ cat > /etc/sudoers.d/crcuser <<-EOF
 crcuser    ALL=(ALL)	NOPASSWD: ALL
 EOF
 
-# this won't work b/c vnc is not yet installed
+# TODO - move to playbook?.. as this won't work b/c vnc is not yet installed
 # mkdir -p ~crcuser/.vnc
 # echo "Vncp8ss#" | vncpasswd -f > ~crcuser/.vnc/passwd
 # chmod 600 ~crcuser/.vnc/passwd

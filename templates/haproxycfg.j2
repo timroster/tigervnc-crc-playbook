@@ -1,0 +1,72 @@
+#---------------------------------------------------------------------
+#
+#   Configuration for haproxy to forward 80/443 traffic to a default
+#   CRC instance. Traffic to the OpenShift console and defaut routes
+#   on the apps-crc.testing domain is blocked except for allowed ip 
+#
+#---------------------------------------------------------------------
+#---------------------------------------------------------------------
+# Global settings
+#---------------------------------------------------------------------
+global
+    chroot      /var/lib/haproxy
+    pidfile     /var/run/haproxy.pid
+    maxconn     4000
+    user        haproxy
+    group       haproxy
+    daemon
+    # turn on stats unix socket
+    stats socket /var/lib/haproxy/stats
+    # utilize system-wide crypto-policies
+    ssl-default-bind-ciphers PROFILE=SYSTEM
+    ssl-default-server-ciphers PROFILE=SYSTEM
+#---------------------------------------------------------------------
+# common defaults that all the 'listen' and 'backend' sections will
+# use if not designated in their block
+#---------------------------------------------------------------------
+defaults
+    log                     global
+    mode                    http
+    timeout connect         5000
+    timeout client          5000
+    timeout server          5000
+#---------------------------------------------------------------------
+# frontends which proxy to the backends
+#
+# secure backend sends requests to CRC console to nowhere
+#---------------------------------------------------------------------
+frontend main
+    bind 0.0.0.0:80
+    default_backend             crc-app-80
+frontend secure
+    bind 0.0.0.0:443
+    mode tcp
+    tcp-request inspect-delay 5s
+    tcp-request content accept if { req_ssl_hello_type 1 }
+    use_backend crc-app-443 if { src {{ allowIP }} }
+    use_backend nowhere if { req_ssl_sni -i -m end apps-crc.testing }
+    default_backend		crc-app-443
+#---------------------------------------------------------------------
+# standard http backend
+#---------------------------------------------------------------------
+backend crc-app-80
+    server  app1 192.168.130.11:80 check
+#---------------------------------------------------------------------
+# standard secure backend
+#---------------------------------------------------------------------
+backend crc-app-443
+    mode tcp
+    server   secure 192.168.130.11:443 check
+#---------------------------------------------------------------------
+# nowhere - this is used to kill external connections to console 
+# and oauth and any other default CRC routes
+#---------------------------------------------------------------------
+backend nowhere
+    http-request silent-drop
+#---------------------------------------------------------------------
+# stats frontend
+#---------------------------------------------------------------------
+frontend stats
+    bind *:9000
+    stats enable
+    stats uri /stats

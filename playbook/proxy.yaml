@@ -1,0 +1,44 @@
+---
+- name: Install and configure haproxy for CRC
+  hosts: all
+
+  tasks:
+    - name: Fetch the variables from var file
+      include_vars:
+        file: ../vars/main.yml
+
+    - name: install haproxy
+      dnf:
+        name:
+          - haproxy
+        state: latest
+
+    - name: put the default service file in the correct place
+      template:
+        src: ../templates/haproxycfg.j2
+        dest: /etc/haproxy/haproxy.cfg
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: allow port 80 into the machine
+      iptables:
+        chain: INPUT
+        protocol: tcp
+        ctstate: NEW
+        destination_port: '80'
+        jump: ACCEPT
+
+    - name: allow port 443 into the machine
+      iptables:
+        chain: INPUT
+        protocol: tcp
+        ctstate: NEW
+        destination_port: '443'
+        jump: ACCEPT
+
+    - name: enable haproxy
+      service:
+        name: haproxy
+        state: started
+        enabled: yes

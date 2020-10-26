@@ -27,8 +27,8 @@ output "ssh_private_key" {
   value = tls_private_key.ssh_key_keypair.private_key_pem
 }
 
-# queue up ansible run
-resource null_resource "run-ansible" {
+# run ansible playbook to install vnc
+resource null_resource "run-ansible-vnc" {
 
   depends_on = [ ibm_is_instance.iac_test_instance ]
   
@@ -53,5 +53,15 @@ resource null_resource "run-ansible" {
 
   provisioner "local-exec" {
     command = "ansible-playbook -u root -i '${ibm_is_floating_ip.iac_test_floating_ip.address},' --ssh-common-args='-o StrictHostKeyChecking=no' --private-key privatekey.pem playbook/main.yaml" 
+  }
+}
+
+# if enabled, run ansible playbook to install haproxy
+resource null_resource "run-ansible-haproxy" {
+  count = var.enable_haproxy ? 1 : 0
+  depends_on = [ null_resource.run-ansible-vnc ]
+
+  provisioner "local-exec" {
+    command = "ansible-playbook -u root -i '${ibm_is_floating_ip.iac_test_floating_ip.address},' --ssh-common-args='-o StrictHostKeyChecking=no' --private-key privatekey.pem playbook/proxy.yaml" 
   }
 }

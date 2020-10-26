@@ -1,5 +1,5 @@
 .terraform
 terraform.tfvars
 terraform.tfstate*
-privatekey.pem
+crchost.pem
 workspace.json

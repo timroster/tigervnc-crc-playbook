@@ -32,6 +32,7 @@ resource "ibm_is_security_group_rule" "iac_test_security_group_rule_tcp_ssh" {
 }
 
 resource "ibm_is_security_group_rule" "iac_test_security_group_rule_tcp_http" {
+  count = var.enable_haproxy ? 1 : 0
   group     = ibm_is_security_group.iac_test_security_group.id
   direction = "inbound"
   tcp {
@@ -41,6 +42,7 @@ resource "ibm_is_security_group_rule" "iac_test_security_group_rule_tcp_http" {
 }
 
 resource "ibm_is_security_group_rule" "iac_test_security_group_rule_tcp_https" {
+  count = var.enable_haproxy ? 1 : 0
   group     = ibm_is_security_group.iac_test_security_group.id
   direction = "inbound"
   tcp {

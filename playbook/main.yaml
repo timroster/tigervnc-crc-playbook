@@ -62,7 +62,7 @@
         chain: INPUT
         protocol: tcp
         ctstate: NEW
-        destination_port: 5801
+        destination_port: '5801'
         jump: ACCEPT
       when: allowDirect
 
@@ -71,34 +71,9 @@
         chain: INPUT
         protocol: tcp
         ctstate: NEW
-        destination_port: 5901
+        destination_port: '5901'
         jump: ACCEPT
       when: allowDirect
-
-    - name: allow port 6001 into the machine
-      iptables:
-        chain: INPUT
-        protocol: tcp
-        ctstate: NEW
-        destination_port: 6001
-        jump: ACCEPT
-      when: allowDirect
-
-    - name: allow port 80 into the machine
-      iptables:
-        chain: INPUT
-        protocol: tcp
-        ctstate: NEW
-        destination_port: 80
-        jump: ACCEPT
-
-    - name: allow port 443 into the machine
-      iptables:
-        chain: INPUT
-        protocol: tcp
-        ctstate: NEW
-        destination_port: 443
-        jump: ACCEPT
 
     - name: pull down crc to the machine
       unarchive:

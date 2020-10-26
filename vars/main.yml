@@ -2,3 +2,4 @@
 user: 'crcuser'
 geometry: "1680x1050"
 allowDirect: false
+allowIP: '24.6.49.162'
