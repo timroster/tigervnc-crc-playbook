@@ -28,7 +28,7 @@ variable "profile" {
 
 # default to using CentOS 8 based on the current ansible playbooks
 variable "image_name" {
-  default = "ibm-centos-8-2-minimal-amd64-1"
+  default = "ibm-centos-8-2-minimal-amd64-2"
 }
 
 # option to configure haproxy through a playbook to allow web applications running on CRC to be 
