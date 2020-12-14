@@ -8,9 +8,16 @@
         file: ../vars/main.yml
 
     - name: install epel
+      when: ( ansible_distribution == "CentOS" and ansible_distribution_major_version == "7" )
       dnf:
         name:
           - epel-release
+        state: latest
+
+    - name: install dnf
+      when: ( ansible_distribution == "CentOS" and ansible_distribution_major_version == "7" )
+      yum:
+        name: dnf
         state: latest
 
     - name: stop that damn firewall
@@ -20,8 +27,15 @@
         enabled: no
           
     - name: install workstation dependencies
+      when: ( ansible_distribution == "CentOS" and ansible_distribution_major_version == "8" )
       dnf:
         name: '@workstation'
+        state: present
+
+    - name: install workstation dependencies 
+      when: ( ansible_distribution == "CentOS" and ansible_distribution_major_version == "7" )
+      yum:
+        name: '@^gnome-desktop-environment'
         state: present
 
     - name: install tigervnc
@@ -30,7 +44,17 @@
           - tigervnc-server
         state: latest
 
+    - name: add vnc user
+      when: ( ansible_distribution == "CentOS" and ansible_distribution_major_version == "8" )
+      template:
+        src: ../templates/vncserver.users.j2
+        dest: /etc/tigervnc/vncserver.users
+        owner: root
+        group: root
+        mode: '0644'
+
     - name: put the default service file in the correct place
+      when: ( ansible_distribution == "CentOS" and ansible_distribution_major_version == "7" )
       template:
         src: ../templates/vncserver.service.j2
         dest: /etc/systemd/system/vncserver@.service
@@ -53,6 +77,13 @@
         owner: "{{ user }}"
         group: "{{ user }}"
         mode: '0644'
+
+    - name: specify gnome session
+      when: ( ansible_distribution == "CentOS" and ansible_distribution_major_version == "8" )
+      lineinfile: 
+        path: /home/{{ user }}/.vnc/config
+        regex: '^# session='
+        line: 'session=gnome'
 
     - name: run the daemon reload
       shell: systemctl daemon-reload
